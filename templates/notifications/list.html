@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block page_title %}Notifications{% endblock %}
+{% block content %}
+<section class="panel">
+  {% for notice in notifications %}
+    <article class="notice {% if not notice.is_read %}unread{% endif %}">
+      <div><strong>{{ notice.title }}</strong><p>{{ notice.message }}</p><span>{{ notice.created_at|date:'d M Y, h:i A' }}</span></div>
+      {% if not notice.is_read %}<a class="btn btn-sm btn-outline-dark" href="{% url 'notifications:read' notice.pk %}">Mark read</a>{% endif %}
+    </article>
+  {% empty %}<p>No notifications.</p>{% endfor %}
+</section>
+{% endblock %}

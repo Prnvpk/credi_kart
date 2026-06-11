@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block page_title %}Messages{% endblock %}
+{% block content %}
+<section class="panel">
+  <div class="d-flex justify-content-end mb-3"><a class="btn btn-dark" href="{% url 'chat_system:compose' %}"><i class="bi bi-send"></i> Compose</a></div>
+  {% for message in conversation %}
+    <article class="notice"><div><strong>{{ message.subject }}</strong><p>{{ message.body }}</p><span>{{ message.sender }} to {{ message.recipient }} | {{ message.created_at|date:'d M Y, h:i A' }}</span></div></article>
+  {% empty %}<p>No messages yet.</p>{% endfor %}
+</section>
+{% endblock %}

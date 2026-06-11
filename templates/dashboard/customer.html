@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% block page_title %}Customer Market{% endblock %}
+{% block content %}
+<section class="commerce-hero">
+  <div class="commerce-hero-copy">
+    <span class="delivery-pill"><i class="bi bi-lightning-charge-fill"></i> Fast local checkout</span>
+    <h2>Everyday essentials with simple store credit.</h2>
+    <p>Shop trusted products, review your balance, and pay with confidence from one clean workspace.</p>
+    <form class="market-search" action="{% url 'products:catalog' %}" method="get">
+      <i class="bi bi-search"></i>
+      <input name="q" type="search" placeholder="Search rice, oil, soap, snacks..." aria-label="Search products">
+      <button type="submit">Search</button>
+    </form>
+  </div>
+  <div class="deal-card">
+    <span>Smart basket</span>
+    <strong>Daily shopping, organized.</strong>
+    <small>Use approved credit or pay instantly at checkout.</small>
+  </div>
+</section>
+
+<div class="stats-grid customer-stats">
+  <div class="stat-card"><span>Orders</span><strong>{{ orders_count }}</strong><i class="bi bi-bag-check"></i></div>
+  <div class="stat-card"><span>Outstanding Credit</span><strong>Rs. {{ outstanding_credit }}</strong><i class="bi bi-credit-card-2-front"></i></div>
+  <div class="stat-card"><span>Overdue</span><strong>{{ overdue_count }}</strong><i class="bi bi-exclamation-circle"></i></div>
+  <div class="stat-card"><span>Paid Back</span><strong>Rs. {{ payments_total }}</strong><i class="bi bi-check2-circle"></i></div>
+</div>
+
+<section class="market-section">
+  <div class="section-heading">
+    <div>
+      <p class="eyebrow">Browse</p>
+      <h2>Popular categories</h2>
+    </div>
+    <a href="{% url 'products:catalog' %}">View all <i class="bi bi-arrow-right"></i></a>
+  </div>
+  <div class="category-grid">
+    {% for category in category_counts %}
+      <a class="category-tile category-{{ category.key }}" href="{% url 'products:catalog' %}?q={{ category.label }}">
+        <span class="category-icon">
+          {% if category.key == 'grocery' %}<i class="bi bi-basket2"></i>
+          {% elif category.key == 'personal_care' %}<i class="bi bi-droplet"></i>
+          {% elif category.key == 'household' %}<i class="bi bi-house-heart"></i>
+          {% elif category.key == 'electronics' %}<i class="bi bi-headphones"></i>
+          {% else %}<i class="bi bi-grid-1x2"></i>{% endif %}
+        </span>
+        <strong>{{ category.label }}</strong>
+        <small>{{ category.total }} items</small>
+      </a>
+    {% empty %}
+      <div class="skeleton-card"></div>
+      <div class="skeleton-card"></div>
+      <div class="skeleton-card"></div>
+      <div class="skeleton-card"></div>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="market-section">
+  <div class="section-heading">
+    <div>
+      <p class="eyebrow">Recommended</p>
+      <h2>Quick adds</h2>
+    </div>
+    <a href="{% url 'products:catalog' %}">Open catalog <i class="bi bi-arrow-right"></i></a>
+  </div>
+  <div class="product-grid">
+    {% for product in featured_products %}
+      <article class="product-card">
+        <div class="product-media product-{{ product.category }}">
+          {% if product.image %}
+            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+          {% elif product.category == 'grocery' %}<i class="bi bi-basket2"></i>
+          {% elif product.category == 'personal_care' %}<i class="bi bi-droplet"></i>
+          {% elif product.category == 'household' %}<i class="bi bi-house-heart"></i>
+          {% elif product.category == 'electronics' %}<i class="bi bi-headphones"></i>
+          {% else %}<i class="bi bi-box-seam"></i>{% endif %}
+        </div>
+        <div class="product-body">
+          <span class="product-meta">{{ product.get_category_display }} • {{ product.stock }} left</span>
+          <h3>{{ product.name }}</h3>
+          <p>{{ product.description|default:'Fresh stock from a trusted local shop.'|truncatechars:72 }}</p>
+          <div class="product-actions">
+            <strong>Rs. {{ product.price }}</strong>
+            <div class="quantity-add" data-quantity-control>
+              <button type="button" aria-label="Decrease quantity">-</button>
+              <span>1</span>
+              <button type="button" aria-label="Increase quantity">+</button>
+            </div>
+            <a class="btn btn-add" href="{% url 'cart:add' product.pk %}"><i class="bi bi-plus-lg"></i> Add</a>
+          </div>
+        </div>
+      </article>
+    {% empty %}
+      <div class="empty-market">
+        <div class="skeleton-card wide"></div>
+        <p>No products are available yet. Your catalog will appear here once shops add stock.</p>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="panel credit-panel mt-4">
+  <div class="section-heading compact">
+    <div>
+      <p class="eyebrow">Credit health</p>
+      <h2>Active credits</h2>
+    </div>
+    <a class="btn btn-sm btn-dark" href="{% url 'products:catalog' %}">Browse Products</a>
+  </div>
+  {% include 'credits/_table.html' with credits=active_credits %}
+</section>
+{% endblock %}

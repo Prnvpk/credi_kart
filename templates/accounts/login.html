@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block auth_content %}
+<main class="auth-page">
+  <section class="auth-panel">
+      <div class="auth-card-head">
+        <a class="brand auth-brand" href="{% url 'accounts:login' %}">CREDI<span>KART</span></a>
+      </div>
+      {% if messages %}{% for message in messages %}<div class="alert alert-{{ message.tags }}">{{ message }}</div>{% endfor %}{% endif %}
+      <form method="post" class="auth-form">{% csrf_token %}
+        {{ form.non_field_errors }}
+        <div class="floating-field">
+          {{ form.username.label_tag }}
+          {{ form.username }}
+        </div>
+        <div class="floating-field">
+          {{ form.password.label_tag }}
+          {{ form.password }}
+        </div>
+        <button class="btn btn-gold w-100" type="submit">Sign In</button>
+      </form>
+      <p class="auth-switch">New here? <a href="{% url 'accounts:register' %}">Create account</a></p>
+  </section>
+</main>
+{% endblock %}

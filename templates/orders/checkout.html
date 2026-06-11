@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+{% block page_title %}Checkout{% endblock %}
+{% block content %}
+<section class="panel">
+  <h2 class="section-title">Order Summary</h2>
+  <ul class="list-group mb-4">{% for item in cart.items.all %}<li class="list-group-item d-flex justify-content-between">{{ item.product.name }} x {{ item.quantity }}<strong>Rs. {{ item.line_total }}</strong></li>{% endfor %}</ul>
+  <form method="post" class="row g-3 checkout-payment-form">{% csrf_token %}
+    <div class="col-12">
+      <label class="form-label">Payment option</label>
+      {{ form.payment_type }}
+      {{ form.payment_type.errors }}
+    </div>
+    <div class="col-12 ready-payment-fields">
+      <div class="row g-3">
+        <div class="col-md-6">{{ form.payment_method.label_tag }}{{ form.payment_method }}{{ form.payment_method.errors }}</div>
+        <div class="col-md-6 upi-fields">{{ form.upi_id.label_tag }}{{ form.upi_id }}{{ form.upi_id.errors }}</div>
+        <div class="col-md-6 card-fields">{{ form.card_holder.label_tag }}{{ form.card_holder }}{{ form.card_holder.errors }}</div>
+        <div class="col-md-6 card-fields">{{ form.card_number.label_tag }}{{ form.card_number }}{{ form.card_number.errors }}</div>
+        <div class="col-md-3 card-fields">{{ form.card_expiry.label_tag }}{{ form.card_expiry }}{{ form.card_expiry.errors }}</div>
+        <div class="col-md-3 card-fields">{{ form.card_cvv.label_tag }}{{ form.card_cvv }}{{ form.card_cvv.errors }}</div>
+      </div>
+    </div>
+    <div class="col-12 pay-later-fields">
+      <label class="form-label">Repayment timeline</label>
+      {{ form.repayment_timeline }}
+      {{ form.repayment_timeline.errors }}
+    </div>
+    <div class="col-md-6 pay-later-fields">{{ form.due_date.label_tag }}{{ form.due_date }}{{ form.due_date.errors }}</div>
+    <div class="col-12">{{ form.notes.label_tag }}{{ form.notes }}{{ form.notes.errors }}</div>
+    <div class="col-12"><button class="btn btn-dark">Place Order</button></div>
+  </form>
+</section>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const form = document.querySelector('.checkout-payment-form');
+    const readyFields = document.querySelector('.ready-payment-fields');
+    const payLaterFields = document.querySelector('.pay-later-fields');
+    const upiFields = document.querySelectorAll('.upi-fields');
+    const cardFields = document.querySelectorAll('.card-fields');
+    const method = document.querySelector('#id_payment_method');
+    const dueDate = document.querySelector('#id_due_date');
+    const timelineInputs = form.querySelectorAll('input[name="repayment_timeline"]');
+
+    function selectedPaymentType() {
+      const selected = form.querySelector('input[name="payment_type"]:checked');
+      return selected ? selected.value : 'ready';
+    }
+
+    function setGroupVisible(elements, isVisible) {
+      elements.forEach(function (element) {
+        element.classList.toggle('d-none', !isVisible);
+      });
+    }
+
+    function formatDate(date) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+
+    function addMonths(date, count) {
+      const result = new Date(date);
+      const originalDay = result.getDate();
+      result.setMonth(result.getMonth() + count);
+      if (result.getDate() !== originalDay) {
+        result.setDate(0);
+      }
+      return result;
+    }
+
+    function selectedTimeline() {
+      const selected = form.querySelector('input[name="repayment_timeline"]:checked');
+      return selected ? selected.value : '10_days';
+    }
+
+    function applyTimelineDate() {
+      const timeline = selectedTimeline();
+      const today = new Date();
+      if (timeline === '10_days') {
+        today.setDate(today.getDate() + 10);
+        dueDate.value = formatDate(today);
+      } else if (timeline === '1_month') {
+        dueDate.value = formatDate(addMonths(today, 1));
+      }
+    }
+
+    function syncPaymentFields() {
+      const isReady = selectedPaymentType() === 'ready';
+      readyFields.classList.toggle('d-none', !isReady);
+      payLaterFields.classList.toggle('d-none', isReady);
+      setGroupVisible(upiFields, isReady && method.value === 'upi');
+      setGroupVisible(cardFields, isReady && method.value === 'card');
+      if (!isReady && !dueDate.value) {
+        applyTimelineDate();
+      }
+    }
+
+    form.querySelectorAll('input[name="payment_type"]').forEach(function (input) {
+      input.addEventListener('change', syncPaymentFields);
+    });
+    method.addEventListener('change', syncPaymentFields);
+    timelineInputs.forEach(function (input) {
+      input.addEventListener('change', applyTimelineDate);
+    });
+    dueDate.addEventListener('change', function () {
+      const custom = form.querySelector('input[name="repayment_timeline"][value="custom"]');
+      if (custom) {
+        custom.checked = true;
+      }
+    });
+    syncPaymentFields();
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block page_title %}Business Reports{% endblock %}
+{% block content %}
+<div class="stats-grid">
+  <div class="stat-card"><span>Sales</span><strong>Rs. {{ sales_total }}</strong></div>
+  <div class="stat-card"><span>Payments</span><strong>Rs. {{ payment_total }}</strong></div>
+  <div class="stat-card"><span>Outstanding</span><strong>Rs. {{ outstanding_total }}</strong></div>
+</div>
+<section class="panel mt-4">
+  <div class="d-flex justify-content-between"><h2 class="section-title">Printable Credit Report</h2><button onclick="window.print()" class="btn btn-outline-dark print-hide"><i class="bi bi-printer"></i> Print</button></div>
+  {% include 'credits/_table.html' with credits=credits %}
+</section>
+{% endblock %}

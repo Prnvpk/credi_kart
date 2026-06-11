@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+{% block page_title %}Customers{% endblock %}
+{% block content %}
+<section class="panel">
+  <form class="d-flex gap-2 mb-3"><input class="form-control" name="q" value="{{ query }}" placeholder="Search customers"><button class="btn btn-outline-dark">Search</button></form>
+  <div class="table-responsive"><table class="table align-middle"><thead><tr><th>Name</th><th>Phone</th><th>Credit Limit</th><th>Outstanding</th><th>City</th></tr></thead><tbody>{% for customer in customers %}<tr><td>{{ customer }}</td><td>{{ customer.user.phone }}</td><td>Rs. {{ customer.credit_limit }}</td><td>Rs. {{ customer.outstanding_balance }}</td><td>{{ customer.city|default:'-' }}</td></tr>{% empty %}<tr><td colspan="5">No customers assigned yet.</td></tr>{% endfor %}</tbody></table></div>
+</section>
+{% endblock %}

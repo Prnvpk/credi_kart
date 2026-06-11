@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block page_title %}Receipt {{ order.order_number }}{% endblock %}
+{% block content %}
+<section class="panel receipt">
+  <div class="d-flex justify-content-between"><div><h2>CREDI-KART Receipt</h2><p>{{ order.shopkeeper.shop_name }}</p></div><button onclick="window.print()" class="btn btn-outline-dark print-hide"><i class="bi bi-printer"></i> Print</button></div>
+  <p><strong>Order:</strong> {{ order.order_number }} | <strong>Date:</strong> {{ order.created_at|date:'d M Y, h:i A' }} | <strong>Customer:</strong> {{ order.customer }}</p>
+  <table class="table"><thead><tr><th>Item</th><th>Qty</th><th>Unit</th><th>Total</th></tr></thead><tbody>{% for item in order.items.all %}<tr><td>{{ item.product_name }}</td><td>{{ item.quantity }}</td><td>Rs. {{ item.unit_price }}</td><td>Rs. {{ item.line_total }}</td></tr>{% endfor %}</tbody></table>
+  <h3 class="text-end">Total: Rs. {{ order.total_amount }}</h3>
+  {% if order.payment_type == 'pay_later' %}
+    <p class="alert alert-warning">Pay-later due date: {{ order.due_date }}</p>
+  {% else %}
+    <p class="alert alert-success">Payment successful by {{ order.get_payment_method_display }}. Transaction ID: {{ order.payment_reference }}</p>
+  {% endif %}
+</section>
+{% endblock %}

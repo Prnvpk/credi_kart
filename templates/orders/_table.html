@@ -1,0 +1,10 @@
+<div class="table-responsive">
+<table class="table align-middle">
+  <thead><tr><th>Order</th><th>Customer</th><th>Shop</th><th>Type</th><th>Payment</th><th>Total</th><th>Date</th><th></th></tr></thead>
+  <tbody>
+  {% for order in orders %}
+    <tr><td>{{ order.order_number }}</td><td>{{ order.customer }}</td><td>{{ order.shopkeeper }}</td><td>{{ order.get_payment_type_display }}</td><td>{% if order.payment_method %}{{ order.get_payment_method_display }}{% else %}{{ order.get_payment_status_display }}{% endif %}</td><td>Rs. {{ order.total_amount }}</td><td>{{ order.created_at|date:'d M Y' }}</td><td><a href="{% url 'orders:receipt' order.pk %}" class="btn btn-sm btn-outline-dark">Receipt</a></td></tr>
+  {% empty %}<tr><td colspan="8">No orders found.</td></tr>{% endfor %}
+  </tbody>
+</table>
+</div>

@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block page_title %}{{ title }}{% endblock %}
+{% block content %}
+<section class="panel">
+  <form method="post" enctype="multipart/form-data" class="row g-3">{% csrf_token %}
+    {% for field in form %}
+      <div class="col-md-6 {% if field.name == 'description' or field.name == 'image' %}col-12{% endif %}">
+        {{ field.label_tag }}{{ field }}{{ field.errors }}
+        {% if field.name == 'image' and form.instance.image %}
+          <div class="product-image-preview mt-3">
+            <img src="{{ form.instance.image.url }}" alt="{{ form.instance.name|default:'Product image' }}">
+          </div>
+        {% endif %}
+      </div>
+    {% endfor %}
+    <div class="col-12"><button class="btn btn-dark">Save Product</button></div>
+  </form>
+</section>
+{% endblock %}

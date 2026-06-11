@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block page_title %}{{ shop.shop_name }} Dashboard{% endblock %}
+{% block content %}
+<div class="stats-grid">
+  <div class="stat-card"><span>Products</span><strong>{{ products_count }}</strong></div>
+  <div class="stat-card"><span>Low Stock</span><strong>{{ low_stock_count }}</strong></div>
+  <div class="stat-card"><span>Customers</span><strong>{{ customers_count }}</strong></div>
+  <div class="stat-card"><span>Orders</span><strong>{{ orders_count }}</strong></div>
+  <div class="stat-card"><span>Outstanding</span><strong>Rs. {{ outstanding_credit }}</strong></div>
+  <div class="stat-card"><span>Paid Today</span><strong>Rs. {{ payments_today }}</strong></div>
+</div>
+<section class="panel mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="section-title">Recent Credit Accounts</h2>
+    <a class="btn btn-sm btn-dark" href="{% url 'products:create' %}"><i class="bi bi-plus-lg"></i> Product</a>
+  </div>
+  {% include 'credits/_table.html' with credits=recent_credits %}
+</section>
+{% endblock %}

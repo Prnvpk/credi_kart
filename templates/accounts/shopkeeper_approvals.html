@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block page_title %}Shopkeeper Approvals{% endblock %}
+{% block content %}
+<section class="panel table-responsive">
+  <table class="table align-middle">
+    <thead><tr><th>Shop</th><th>Owner</th><th>Licence Document</th><th>Status</th><th>Action</th></tr></thead>
+    <tbody>
+    {% for shop in shopkeepers %}
+      <tr>
+        <td>{{ shop.shop_name }}</td><td>{{ shop.user.get_full_name|default:shop.user.username }}</td>
+        <td>
+          {% if shop.licence_document %}
+            <a class="btn btn-sm btn-soft" href="{{ shop.licence_document.url }}" target="_blank" rel="noopener"><i class="bi bi-file-earmark-text"></i> View document</a>
+          {% else %}
+            <span class="text-muted">Not uploaded</span>
+          {% endif %}
+        </td>
+        <td><span class="badge text-bg-{% if shop.user.is_approved %}success{% else %}warning{% endif %}">{% if shop.user.is_approved %}Approved{% else %}Pending{% endif %}</span></td>
+        <td>
+          <form method="post" action="{% url 'accounts:toggle_shopkeeper' shop.pk %}" class="d-inline">{% csrf_token %}
+            <button name="action" value="{% if shop.user.is_approved %}deactivate{% else %}approve{% endif %}" class="btn btn-sm btn-outline-dark">{% if shop.user.is_approved %}Deactivate{% else %}Approve{% endif %}</button>
+          </form>
+        </td>
+      </tr>
+    {% empty %}<tr><td colspan="5">No shopkeepers yet.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}

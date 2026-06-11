@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block auth_content %}
+<main class="auth-page">
+  <section class="auth-panel wide">
+    <div class="auth-card-head">
+      <a class="brand auth-brand" href="{% url 'accounts:login' %}">CREDI<span>KART</span></a>
+      <p>Create your account and start using store credit with a cleaner checkout.</p>
+    </div>
+    <h1>Create account</h1>
+    <form method="post" enctype="multipart/form-data" class="row g-3" data-register-form>{% csrf_token %}
+      {% for field in form %}
+        <div class="col-md-6" {% if field.name == 'shop_name' or field.name == 'licence_document' %}data-shopkeeper-field {% if form.role.value != 'shopkeeper' %}hidden{% endif %}{% endif %}>
+          {{ field.label_tag }}{{ field }}
+          {% if field.help_text and field.name != 'password1' and field.name != 'password2' %}
+            <div class="form-text">{{ field.help_text|safe }}</div>
+          {% elif field.help_text and field.errors and field.name == 'password1' %}
+            <div class="form-text">{{ field.help_text|safe }}</div>
+          {% endif %}
+          {% for error in field.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+        </div>
+      {% endfor %}
+      <div class="col-12"><button class="btn btn-dark">Register</button> <a class="btn btn-link" href="{% url 'accounts:login' %}">Login</a></div>
+    </form>
+    <script>
+      (() => {
+        const form = document.querySelector('[data-register-form]');
+        if (!form) return;
+
+        const role = form.querySelector('[name="role"]');
+        const shopkeeperFields = form.querySelectorAll('[data-shopkeeper-field]');
+
+        const syncShopkeeperFields = () => {
+          const show = role && role.value === 'shopkeeper';
+          shopkeeperFields.forEach((field) => {
+            field.hidden = !show;
+            field.querySelectorAll('input, select, textarea').forEach((input) => {
+              input.disabled = !show;
+              if (!show && input.type === 'file') input.value = '';
+            });
+          });
+        };
+
+        if (role) {
+          role.addEventListener('change', syncShopkeeperFields);
+          syncShopkeeperFields();
+        }
+      })();
+    </script>
+  </section>
+</main>
+{% endblock %}

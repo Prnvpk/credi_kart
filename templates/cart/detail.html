@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block page_title %}Shopping Cart{% endblock %}
+{% block content %}
+<section class="panel">
+  <div class="table-responsive">
+    <table class="table align-middle">
+      <thead><tr><th>Product</th><th>Price</th><th>Qty</th><th>Total</th><th></th></tr></thead>
+      <tbody>
+      {% for item in cart.items.all %}
+        <tr>
+          <td>{{ item.product.name }}</td><td>Rs. {{ item.product.price }}</td>
+          <td><form method="post" action="{% url 'cart:update_item' item.pk %}" class="d-flex gap-2">{% csrf_token %}<input class="form-control form-control-sm qty-input" type="number" name="quantity" value="{{ item.quantity }}" min="0"><button class="btn btn-sm btn-outline-dark">Update</button></form></td>
+          <td>Rs. {{ item.line_total }}</td><td></td>
+        </tr>
+      {% empty %}<tr><td colspan="5">Your cart is empty.</td></tr>{% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <div class="d-flex justify-content-between align-items-center"><strong>Total: Rs. {{ cart.total_amount }}</strong><a class="btn btn-dark" href="{% url 'orders:checkout' %}">Checkout</a></div>
+</section>
+{% endblock %}

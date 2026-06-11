@@ -1,0 +1,18 @@
+<div class="table-responsive">
+<table class="table align-middle">
+  <thead><tr><th>Order</th><th>Customer</th><th>Shop</th><th>Principal</th><th>Balance</th><th>Due</th><th>Status</th><th></th></tr></thead>
+  <tbody>
+  {% for credit in credits %}
+    <tr>
+      <td>{{ credit.order.order_number }}</td><td>{{ credit.customer }}</td><td>{{ credit.shopkeeper }}</td>
+      <td>Rs. {{ credit.principal_amount }}</td><td>Rs. {{ credit.remaining_balance }}</td><td>{{ credit.due_date }}</td>
+      <td><span class="badge text-bg-{% if credit.status == 'paid' %}success{% elif credit.status == 'overdue' %}danger{% else %}warning{% endif %}">{{ credit.get_status_display }}</span></td>
+      <td class="text-nowrap">
+        {% if credit.remaining_balance > 0 %}<a class="btn btn-sm btn-dark" href="{% url 'payments:record' credit.pk %}">Pay</a>{% endif %}
+        {% if user.is_customer and credit.remaining_balance > 0 %}<form method="post" action="{% url 'credits:extension' credit.pk %}" class="d-inline">{% csrf_token %}<button class="btn btn-sm btn-outline-secondary">Extend</button></form>{% endif %}
+      </td>
+    </tr>
+  {% empty %}<tr><td colspan="8">No credit records found.</td></tr>{% endfor %}
+  </tbody>
+</table>
+</div>

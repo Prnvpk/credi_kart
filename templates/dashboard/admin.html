@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block page_title %}Platform Analytics{% endblock %}
+{% block content %}
+<div class="stats-grid">
+  <div class="stat-card"><span>Shopkeepers</span><strong>{{ total_shopkeepers }}</strong></div>
+  <div class="stat-card"><span>Pending Approvals</span><strong>{{ pending_shopkeepers }}</strong></div>
+  <div class="stat-card"><span>Customers</span><strong>{{ total_customers }}</strong></div>
+  <div class="stat-card"><span>Transactions</span><strong>{{ total_transactions }}</strong></div>
+  <div class="stat-card"><span>Sales Volume</span><strong>Rs. {{ total_revenue }}</strong></div>
+  <div class="stat-card"><span>Outstanding Credit</span><strong>Rs. {{ outstanding_credit }}</strong></div>
+</div>
+<section class="panel mt-4">
+  <div class="d-flex justify-content-between align-items-center"><h2 class="section-title">Recent Orders</h2><canvas id="adminChart" height="80"></canvas></div>
+  {% include 'orders/_table.html' with orders=recent_orders %}
+</section>
+{% endblock %}

@@ -1,0 +1,17 @@
+__pycache__/
+*.py[cod]
+*.sqlite3
+db.sqlite3
+
+venv/
+.venv/
+env/
+
+staticfiles/
+media/
+
+.DS_Store
+
+# Local backup/copy of this project; deploy from the repository root instead.
+/credi_kart/
+*.tar.gz
